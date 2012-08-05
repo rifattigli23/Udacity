@@ -29,11 +29,26 @@ def card_ranks(hand):
   ranks.sort(reverse=True)
   return ranks
 
+def straight(ranks):
+  "Return True if the ordered ranks form a 5-card straight."
+  correctStraight = range(min(ranks),max(ranks)+1)
+  correctStraight.sort(reverse=True)
+  return ranks == correctStraight
+
+def flush(hand):
+  "Return True if all the cards have the same suit."
+  suits = [suit for value,suit in hand]
+  return [suit==suits[0] for value,suit in hand].count(True) == 5  
+
 def test():
   "Test cases for the functions in poker program."
   sf = "6C 7C 8C 9C TC".split()
   fk = "9D 9H 9S 9C 7D".split()
   fh = "TD TC TH 7C 7D".split()
+  assert straight([9, 8, 7, 6, 5]) == True
+  assert straight([9, 8, 8, 6, 5]) == False
+  assert flush(sf) == True
+  assert flush(fk) == False
   assert card_ranks(sf) == [10, 9, 8, 7, 6]
   assert card_ranks(fk) == [9, 9, 9, 9, 7]
   assert card_ranks(fh) == [10, 10, 10, 7, 7]  
