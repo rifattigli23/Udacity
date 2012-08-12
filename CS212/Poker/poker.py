@@ -93,9 +93,10 @@ def test():
   tp = "5S 5D 9H 9C 6S".split() # two pair
   s1 = "AS 2S 3S 4S 5C".split() # A-5 straight
   s2 = "2C 3C 4C 5S 6S".split() # 2-6 straight
-  ah = "AS 2S 3S 4S 6S".split() # A high
+  ah = "AS 2S 3S 4C 6S".split() # A high
   sh = "2S 3S 4S 6C 7D".split() # 7 high
-  assert poker([s1, s2, ah, sh]) == s2
+  assert hand_rank(ah) == (0, [14, 6, 4, 3, 2])
+  assert poker([s1, s2, ah, sh]) == [s2]
   fkranks = card_ranks(fk)
   tpranks = card_ranks(tp)
   assert kind(4, fkranks) == 9
@@ -111,11 +112,11 @@ def test():
   assert card_ranks(sf) == [10, 9, 8, 7, 6]
   assert card_ranks(fk) == [9, 9, 9, 9, 7]
   assert card_ranks(fh) == [10, 10, 10, 7, 7]  
-  assert poker([sf, fk, fh]) == sf
-  assert poker([fk,fh]) == fk
-  assert poker([fh, fh]) == fh
-  assert poker([sf]) == sf
-  assert poker([sh] + 99*[fh]) == sf 
+  assert poker([sf, fk, fh]) == [sf]
+  assert poker([fk,fh]) == [fk]
+  assert poker([fh, fh]) == [fh, fh]
+  assert poker([sf]) == [sf]
+  assert poker([sh] + 99*[fh]) == 99*[fh] 
   assert hand_rank(sf) == (8,10)
   assert hand_rank(fk) == (7,9,7)
   assert hand_rank(fh) == (6,10,7)  
