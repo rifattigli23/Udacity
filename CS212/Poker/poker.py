@@ -27,7 +27,7 @@ def allmax(iterable, key=None):
     xval = key(x)
     if not result or xval > maxval:
       result, maxval = [x], xval
-    elif xval == maval:
+    elif xval == maxval:
       result.append(x)
   return result
 
