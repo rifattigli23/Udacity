@@ -33,7 +33,7 @@ def allmax(iterable, key=None):
 
 def hand_rank(hand):
   "Return a value indicating how high the hand ranks."
-  # counts is the ocunt of each rank; ranks lists corresponding ranks
+  # counts is the count of each rank; ranks lists corresponding ranks
   # E.g., '7 T 7 9 7' => counts = (3, 1, 1); ranks = (7, 10, 9)
   groups = group(['--23456789TJQKA'.index(r) for r, s in hand])
   counts, ranks = unzip(groups)
