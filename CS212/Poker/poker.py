@@ -58,10 +58,15 @@ def two_pair(ranks):
 
 def test():
   "Test cases for the functions in poker program."
-  sf = "6C 7C 8C 9C TC".split()
-  fk = "9D 9H 9S 9C 7D".split()
-  fh = "TD TC TH 7C 7D".split()
-  tp = "5S 5D 9H 9C 6S".split()
+  sf = "6C 7C 8C 9C TC".split() # straight flush
+  fk = "9D 9H 9S 9C 7D".split() # four of a kind
+  fh = "TD TC TH 7C 7D".split() # full house
+  tp = "5S 5D 9H 9C 6S".split() # two pair
+  s1 = "AS 2S 3S 4S 5C".split() # A-5 straight
+  s2 = "2C 3C 4C 5S 6S".split() # 2-6 straight
+  ah = "AS 2S 3S 4S 6S".split() # A high
+  sh = "2S 3S 4S 6C 7D".split() # 7 high
+  assert poker([s1, s2, ah, sh]) == s2
   fkranks = card_ranks(fk)
   tpranks = card_ranks(tp)
   assert kind(4, fkranks) == 9
