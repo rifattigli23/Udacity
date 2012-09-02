@@ -1,0 +1,5 @@
+def sq(x): print 'sq called', x; return x*x
+g = (sq(x) for x in range(10) if x%2 ==0)
+
+
+for x2 in (sq(x) for x in range(10) if x%2 == 0): pass
