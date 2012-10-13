@@ -16,6 +16,7 @@
 #
 import webapp2
 from inputValidation import valid_day, valid_month, valid_year
+from html_util import escape_html
 
 form="""
 <form method="post">
@@ -43,9 +44,9 @@ form="""
 class MainHandler(webapp2.RequestHandler):
     def write_form(self, error="", month="", day="", year=""):
         self.response.out.write(form % {"error": error,
-                                        "month": month,
-                                        "day": day,
-                                        "year": year})
+                                        "month": escape_html(month),
+                                        "day": escape_html(day),
+                                        "year": escape_html(year)})
     
     def get(self):
         self.write_form()
