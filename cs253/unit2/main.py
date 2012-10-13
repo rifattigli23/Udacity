@@ -15,6 +15,7 @@
 # limitations under the License.
 #
 import webapp2
+from inputValidation import valid_day, valid_month, valid_year
 
 form="""
 <form method="post">
@@ -44,7 +45,14 @@ class MainHandler(webapp2.RequestHandler):
         self.response.out.write(form)
     
     def post(self):
-        self.response.out.write("Thanks! That's a totally valid day!")
+        user_month = valid_month(self.request.get('month'))
+        user_day = valid_day(self.request.get('day'))
+        user_year = valid_year(self.request.get('year'))
+        
+        if not (user_month and user_day and user_year):
+            self.response.out.write(form)
+        else:
+            self.response.out.write("Thanks! That's a totally valid day!")
         
 app = webapp2.WSGIApplication([('/', MainHandler),
 ], debug=True)
