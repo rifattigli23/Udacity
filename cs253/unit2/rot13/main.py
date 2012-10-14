@@ -21,6 +21,10 @@ class BaseHandler(webapp2.RequestHandler):
         
     def write(self, *a, **kw):
         self.response.out.write(*a, **kw)
+
+class TableOfContents(BaseHandler):
+    def get(self):
+        self.render('table-of-contents.html')
         
 class Rot13(BaseHandler):
     def get(self):
@@ -88,7 +92,8 @@ class Welcome(BaseHandler):
         else:
             self.redirect('/unit2/signup')
             
-app = webapp2.WSGIApplication([('/unit2/rot13', Rot13),
+app = webapp2.WSGIApplication([('/', TableOfContents),
+                               ('/unit2/rot13', Rot13),
                                ('/unit2/signup', Signup),
                                ('/unit2/welcome', Welcome)],
                                debug=True)
