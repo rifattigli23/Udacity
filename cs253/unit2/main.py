@@ -14,7 +14,7 @@ jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
 def render_str(template, **params):
     t = jinja_env.get_template(template)
     return t.render(params)
-    
+
 class BaseHandler(webapp2.RequestHandler):
     def render(self, template, **kw):
         self.response.out.write(render_str(template, **kw))
@@ -28,11 +28,11 @@ class TableOfContents(BaseHandler):
         
 class Play(BaseHandler):
     def get(self):
-        self.render('play.html')
+        self.render('unit1/play.html')
         
 class Rot13(BaseHandler):
     def get(self):
-        self.render('rot13-form.html')
+        self.render('unit2/rot13-form.html')
         
     def post(self):
         rot13 = ''
@@ -40,7 +40,7 @@ class Rot13(BaseHandler):
         if text:
             rot13 = text.encode('rot13')
         
-        self.render('rot13-form.html', text = rot13)
+        self.render('unit2/rot13-form.html', text = rot13)
         
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
 def valid_username(username):
@@ -57,7 +57,7 @@ def valid_email(email):
 class Signup(BaseHandler):
 
     def get(self):
-        self.render("signup-form.html")
+        self.render("unit2/signup-form.html")
     
     def post(self):
         have_error = False
@@ -84,7 +84,7 @@ class Signup(BaseHandler):
             have_error = True
     
         if have_error:
-            self.render('signup-form.html', **params)
+            self.render('unit2/signup-form.html', **params)
         else:
             self.redirect('/unit2/welcome?username=' + username)
 
@@ -92,13 +92,43 @@ class Welcome(BaseHandler):
     def get(self):
         username = self.request.get('username')
         if valid_username(username):
-            self.render('welcome.html', username = username)
+            self.render('unit2/welcome.html', username = username)
         else:
             self.redirect('/unit2/signup')
+     
+class Art(db.Model):
+    title = db.StringProperty(required = True)
+    art = db.TextProperty(required = True)
+    created = db.DateTimeProperty(auto_now_add = True)
+    
+           
+class AsciiChan(BaseHandler):
+    def render_front(self, title="", art="", error=""):
+        arts = db.GqlQuery("SELECT * FROM Art "
+                            "ORDER BY created DESC ")
+        self.render("unit3/front.html", title=title, art=art, error=error, arts=arts)
+    
+    def get(self):
+        self.render_front()
+    
+    def post(self):
+        title = self.request.get("title")
+        art = self.request.get("art")
+        
+        if title and art:
+            a = Art(title=title, art=art)
+            a.put()
+            
+            self.redirect("/unit3/asciichan")
+        else:
+            error = "we need both a title and some artwork!"
+            self.render_front(title, art, error)
+        
             
 app = webapp2.WSGIApplication([('/', TableOfContents),
                                ('/unit1/play', Play),
                                ('/unit2/rot13', Rot13),
                                ('/unit2/signup', Signup),
-                               ('/unit2/welcome', Welcome)],
+                               ('/unit2/welcome', Welcome),
+                               ('/unit3/asciichan', AsciiChan)],
                                debug=True)
