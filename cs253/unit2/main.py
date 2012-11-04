@@ -5,6 +5,8 @@ from string import letters
 import webapp2
 import jinja2
 
+import blog
+
 from google.appengine.ext import db
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
@@ -123,12 +125,14 @@ class AsciiChan(BaseHandler):
         else:
             error = "we need both a title and some artwork!"
             self.render_front(title, art, error)
-        
+
+
             
 app = webapp2.WSGIApplication([('/', TableOfContents),
                                ('/unit1/play', Play),
                                ('/unit2/rot13', Rot13),
                                ('/unit2/signup', Signup),
                                ('/unit2/welcome', Welcome),
-                               ('/unit3/asciichan', AsciiChan)],
+                               ('/unit3/asciichan', AsciiChan),
+                               ('/unit3/blog', blog.Blog)],
                                debug=True)
