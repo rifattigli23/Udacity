@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CS 253 Blog</title>
+  <link rel="stylesheet" type="text/css" href="/stylesheets/main.css">
+</head>
+<body>
+  <a href="/unit3/blog" class="main-title">Graham's Blog</a>
+  <div id="content">
+    {% for post in posts %}
+    <div class="post">
+        <pre class="post-title">{{post.subject}}</pre>
+        <pre class="post-date">{{post.created}}</pre>
+        <hr>
+        <pre class="post-content">{{post.content}}</pre>
+    </div>  
+    {% endfor %}
+  </div>
+</body>
+</html>
