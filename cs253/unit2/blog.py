@@ -11,41 +11,54 @@ template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
                                 autoescape = True)
 
-def render_str(template, **params):
-    t = jinja_env.get_template(template)
-    return t.render(params)
-        
+# Base handler class with utility functions        
 class BaseHandler(webapp2.RequestHandler):        
-    def render(self, template, **kw):
-        self.response.out.write(render_str(template, **kw))
-        
     def write(self, *a, **kw):
         self.response.out.write(*a, **kw)
-    
-class Blog(db.Model):
-    title = db.StringProperty(required = True)
+    def render_str(self, template, **params):
+        t = jinja_env.get_template(template)
+        return t.render(params)    
+    def render(self, template, **kw):
+        self.write(self.render_str(template, **kw))
+
+# Defines the database model    
+class Post(db.Model):
+    subject = db.StringProperty(required = True)
     content = db.TextProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
 
-class Blog(BaseHandler):
-    def render_front(self, title="", content="", error=""):
-        contents = db.GqlQuery("SELECT * FROM content "
+# Render all posts
+class BlogHandler(BaseHandler):
+    def render_front(self, subject="", post="", error=""):
+        posts = db.GqlQuery("SELECT * FROM Post "
                             "ORDER BY created DESC ")
-        self.render("unit3/blog.html", title=title, content=content, error=error, contents=contents)
+        self.render("unit3/blog.html", subject=subject, post=post, error=error, posts=posts)
     
     def get(self):
         self.render_front()
+
+# Submission form    
+class NewPostHandler(BaseHandler):
+    def render_front(self, subject="", content="", error=""):
+        self.render("unit3/newpost.html", subject=subject, content=content, error=error)
     
+    def get(self):
+        self.render_front()
+
     def post(self):
-        title = self.request.get("title")
+        subject = self.request.get("subject")
         content = self.request.get("content")
         
-        if title and content:
-            a = content(title=title, content=content)
-            a.put()
-            
-            self.redirect("/unit3/blog")
+        if subject and content:
+            post = Post(subject=subject, content=content)
+            key = post.put()
+            self.redirect("/unit3/blog/%d" % key.id())
         else:
-            error = "we need both a title and some content!"
-            self.render_front(title, content, error)
-        
+            error = "we need both a subject and some content!"
+            self.render_front(subject, content, error)
+            
+# Render a single post
+class Permalink(BaseHandler):
+    def get(self, post):
+        post = Post.get_by_id(int(post))
+        self.render("unit3/post.html", posts = [post])
