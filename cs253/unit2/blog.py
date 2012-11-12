@@ -61,4 +61,4 @@ class NewPostHandler(BaseHandler):
 class Permalink(BaseHandler):
     def get(self, post):
         post = Post.get_by_id(int(post))
-        self.render("unit3/post.html", posts = [post])
+        self.render("unit3/blog.html", posts = [post])
