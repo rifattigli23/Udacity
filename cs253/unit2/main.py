@@ -126,7 +126,6 @@ class AsciiChan(BaseHandler):
             error = "we need both a title and some artwork!"
             self.render_front(title, art, error)
 
-
             
 app = webapp2.WSGIApplication([('/', TableOfContents),
                                ('/unit1/play', Play),
@@ -134,5 +133,9 @@ app = webapp2.WSGIApplication([('/', TableOfContents),
                                ('/unit2/signup', Signup),
                                ('/unit2/welcome', Welcome),
                                ('/unit3/asciichan', AsciiChan),
-                               ('/unit3/blog', blog.Blog)],
+                               ('/unit3/blog', blog.BlogHandler),
+                               ('/unit3/blog/', blog.BlogHandler),
+                               ('/unit3/blog/newpost', blog.NewPostHandler),
+                               ('/unit3/blog/newpost/', blog.NewPostHandler),
+                               ('/unit3/blog/(\d+)', blog.Permalink)],
                                debug=True)
