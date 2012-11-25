@@ -126,6 +126,21 @@ class AsciiChan(BaseHandler):
             error = "we need both a title and some artwork!"
             self.render_front(title, art, error)
 
+class Cookies(BaseHandler):
+    def get(self):
+        self.response.headers['Content-Tpe'] = 'text/plain'
+        visits = self.request.cookies.get('visits', '0')
+        if visits.isdigit():
+            visits = int(visits) + 1
+        else:
+            visits = 0
+
+        self.response.headers.add_header('Set-Cookie', 'visits=%s' % visits)
+        
+        if visits > 100:
+            self.write("You are the best ever!")
+        else:
+            self.write("You've been here %s times!" % visits)
             
 app = webapp2.WSGIApplication([('/', TableOfContents),
                                ('/unit1/play', Play),
@@ -137,5 +152,6 @@ app = webapp2.WSGIApplication([('/', TableOfContents),
                                ('/unit3/blog/', blog.BlogHandler),
                                ('/unit3/blog/newpost', blog.NewPostHandler),
                                ('/unit3/blog/newpost/', blog.NewPostHandler),
-                               ('/unit3/blog/(\d+)', blog.Permalink)],
+                               ('/unit3/blog/(\d+)', blog.Permalink),
+                               ('/unit4/cookies', Cookies)],
                                debug=True)
