@@ -21,7 +21,7 @@ class BaseHandler(webapp2.RequestHandler):
     def render(self, template, **kw):
         self.write(self.render_str(template, **kw))
 
-# Defines the database model    
+# Define the database model for a Post
 class Post(db.Model):
     subject = db.StringProperty(required = True)
     content = db.TextProperty(required = True)
@@ -31,6 +31,11 @@ class Post(db.Model):
     def render(self):
         self._render_text = self.content.replace('\n', '<br>')
         return render_str("blog.html", p = self)
+        
+# Define the database model for a User
+class User(db.Model):
+    username = db.StringProperty(required = True)
+    password_hash = db.StringProperty(required = True)
 
 # Render all posts
 class BlogHandler(BaseHandler):
