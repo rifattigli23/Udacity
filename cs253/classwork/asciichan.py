@@ -28,8 +28,9 @@ class AsciiChan(basehandler.BaseHandler):
             #parse the xml and find the coordinates
             dom = minidom.parseString(content)
             coordinateNodeList = dom.getElementsByTagName('gml:coordinates')
-            lon , lat = coordinateNodeList[0].firstChild.nodeValue.split(',')
-            return lat, lon
+            if coordinateNodeList and coordinateNodeList[0].firstChild.nodeValue:
+                lon , lat = coordinateNodeList[0].firstChild.nodeValue.split(',')
+                return lat, lon
     
     def get(self):
         self.render_front()
