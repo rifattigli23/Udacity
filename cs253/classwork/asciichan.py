@@ -14,6 +14,23 @@ class AsciiChan(basehandler.BaseHandler):
                             "ORDER BY created DESC ")
         self.render("front.html", title=title, art=art, error=error, arts=arts)
     
+    def get_coords(ip):
+        IP_URL ="http://api.hostip.info/?ip="
+        url = IP_URL + ip
+        content = None
+
+        try:
+            content = url2lib2.urlopen(url).read()
+        except URLError:
+            return
+        
+        if content:
+            #parse the xml and find the coordinates
+            dom = minidom.parseString(content)
+            coordinateNodeList = dom.getElementsByTagName('gml:coordinates')
+            lon , lat = coordinateNodeList[0].firstChild.nodeValue.split(',')
+            return lat, lon
+    
     def get(self):
         self.render_front()
     
@@ -23,9 +40,18 @@ class AsciiChan(basehandler.BaseHandler):
         
         if title and art:
             a = Art(title=title, art=art)
-            a.put()
             
+            #lookup the user's coordiantes from their IP
+            #if we have coordinates, add them to the Art
+            
+            
+            a.put()
             self.redirect("/unit3/asciichan")
         else:
             error = "we need both a title and some artwork!"
             self.render_front(title, art, error)
+            
+# TODO: add map to the front page
+    # use hostip.info to lookup location data for ip addresses
+# TODO: draw a map
+    # Google Maps (static maps)
