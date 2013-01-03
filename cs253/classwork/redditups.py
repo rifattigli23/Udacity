@@ -1,7 +1,7 @@
 import json
 import urllib2
+import basehandler
 
-reddit_front = urllib2.urlopen("http://www.reddit.com/.json").read() 
 
 # QUIZ - reddit_front is a JSON string of reddit's front page. Inside it is a
 # list of links, each of which has an "ups" attribute. From this dataset, what
@@ -17,8 +17,14 @@ reddit_front = urllib2.urlopen("http://www.reddit.com/.json").read()
 # You can also try running this in the python interpreter in the console, 
 # which may make it easier to search through reddit_front.
 
-def total_ups():
-    j = json.loads(reddit_front)
-    return sum(c['data']['ups'] for c in j['data']['children'])
 
-print 'total ups = ' + str(total_ups())
+class RedditUps(basehandler.BaseHandler):    
+    def total_ups():
+        j = json.loads(reddit_front)
+        return sum(c['data']['ups'] for c in j['data']['children'])
+        
+    def get(self):
+        reddit_front = urllib2.urlopen("http://www.reddit.com/.json").read() 
+        j = json.loads(reddit_front)
+        self.render('total ups = ' + str(total_ups()))
+    
