@@ -1,5 +1,12 @@
 import basehandler
 from google.appengine.ext import db
+import urllib2
+from xml.dom import minidom
+
+class Art(db.Model):
+    title = db.StringProperty(required = True)
+    art = db.TextProperty(required = True)
+    created = db.DateTimeProperty(auto_now_add = True)
 
 class AsciiChan(basehandler.BaseHandler):
     def render_front(self, title="", art="", error=""):

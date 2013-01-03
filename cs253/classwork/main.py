@@ -8,8 +8,6 @@ import redditups
 import basehandler
 import asciichan
 
-
-#todo: move to separate module
 SECRET = 'imsosecret'
 
 def hash_str(s):
@@ -96,11 +94,6 @@ class Welcome(basehandler.BaseHandler):
             self.render('/welcome.html', username = username)
         else:
             self.redirect('/unit2/signup')
-     
-class Art(db.Model):
-    title = db.StringProperty(required = True)
-    art = db.TextProperty(required = True)
-    created = db.DateTimeProperty(auto_now_add = True)
 
 class Cookies(basehandler.BaseHandler):
     def get(self):
