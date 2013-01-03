@@ -25,12 +25,11 @@ class AsciiChan(basehandler.BaseHandler):
             return
         
         if content:
-            #parse the xml and find the coordinates
             dom = minidom.parseString(content)
             coordinateNodeList = dom.getElementsByTagName('gml:coordinates')
             if coordinateNodeList and coordinateNodeList[0].firstChild.nodeValue:
                 lon , lat = coordinateNodeList[0].firstChild.nodeValue.split(',')
-                return lat, lon
+                return db.GeoPt(lat, lon)
     
     def get(self):
         self.render_front()
