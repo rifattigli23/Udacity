@@ -31,13 +31,17 @@ class AsciiChan(basehandler.BaseHandler):
     def render_front(self, title="", art="", error=""):
         arts = db.GqlQuery("SELECT * FROM Art "
                             "ORDER BY created DESC ")
-        self.render("front.html", title=title, art=art, error=error, arts=arts)
+        
+        #prevent the running of multiple queries
+        arts = list(arts)
 
+        #find which arts have coords        
         points = filter(None, (a.coordinates for a in arts))
 
-        #find which arts have coords
         # if we have any arts with coords, make an image url
         #display the image url
+        
+        self.render("front.html", title=title, art=art, error=error, arts=arts)
 
     def get(self):
         self.render_front()
