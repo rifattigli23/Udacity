@@ -33,8 +33,13 @@ class AsciiChan(basehandler.BaseHandler):
                             "ORDER BY created DESC ")
         self.render("front.html", title=title, art=art, error=error, arts=arts)
 
+        points = filter(None, (a.coordinates for a in arts))
+
+        #find which arts have coords
+        # if we have any arts with coords, make an image url
+        #display the image url
+
     def get(self):
-        print get_coords(self.request.remote_addr)
         self.render_front()
     
     def post(self):
