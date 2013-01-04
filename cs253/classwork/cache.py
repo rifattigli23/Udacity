@@ -11,11 +11,13 @@ def complex_computation(a, b):
 # results after computing them for the first time so future calls are faster
 cache = {}
 def cached_computation(a, b):
-    ###Your code here.
-    if not cache.has_key('result'):
-        cache['result'] = complex_computation(a,b)
-
-    return cache['result']
+    key = (a,b)
+    if key in cache:
+        r = cache[key]
+    else:
+        r = complex_computation(a, b)
+        cache[key] = r
+    return r
 
 start_time = time.time()
 print cached_computation(5, 3)
@@ -24,4 +26,3 @@ print "the first computation took %f seconds" % (time.time() - start_time)
 start_time2 = time.time()
 print cached_computation(5, 3)
 print "the second computation took %f seconds" % (time.time() - start_time2)
-
