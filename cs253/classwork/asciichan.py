@@ -36,10 +36,10 @@ class Art(db.Model):
     coordinates = db.GeoPtProperty()
 
 CACHE = {}
-def top_arts():
+def top_arts(update = False):
     key = 'top'
     
-    if key in CACHE:
+    if not update and key in CACHE:
         arts = CACHE[key]
     else:
         logging.error("DB QUERY")
@@ -88,8 +88,8 @@ class AsciiChan(basehandler.BaseHandler):
             #write to database
             a.put()
             
-            #clear cache
-            CACHE.clear()
+            #update cache
+            top_arts(True)
             
             self.redirect("/unit3/asciichan")
         else:
