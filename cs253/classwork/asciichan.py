@@ -2,6 +2,7 @@ import basehandler
 from google.appengine.ext import db
 import urllib2
 from xml.dom import minidom
+import logging
 
 GMAPS_URL = "http://maps.googleapis.com/maps/api/staticmap?size=380x263&sensor=false&"
 def gmaps_img(points):
@@ -34,13 +35,27 @@ class Art(db.Model):
     created = db.DateTimeProperty(auto_now_add = True)
     coordinates = db.GeoPtProperty()
 
+CACHE = {}
+def top_arts():
+    key = 'top'
+    
+    if key in CACHE:
+        arts = CACHE[key]
+    else:
+        logging.error("DB QUERY")
+        arts = db.GqlQuery("SELECT * "
+                            "FROM Art "
+                            "ORDER BY created DESC "
+                            "LIMIT 10"
+                            )
+        arts = list(arts)
+        CACHE[key] = arts
+
+    return arts
+    
 class AsciiChan(basehandler.BaseHandler):
     def render_front(self, title="", art="", error=""):
-        arts = db.GqlQuery("SELECT * FROM Art "
-                            "ORDER BY created DESC ")
-        
-        #prevent the running of multiple queries
-        arts = list(arts)
+        arts = top_arts()
 
         #find which arts have coords        
         points = filter(None, (a.coordinates for a in arts))
@@ -70,13 +85,13 @@ class AsciiChan(basehandler.BaseHandler):
             if coords:
                 a.coordinates = coords
             
+            #write to database
             a.put()
+            
+            #clear cache
+            CACHE.clear()
+            
             self.redirect("/unit3/asciichan")
         else:
             error = "we need both a title and some artwork!"
-            self.render_front(title, art, error)
-            
-# TODO: add map to the front page
-    # use hostip.info to lookup location data for ip addresses
-# TODO: draw a map
-    # Google Maps (static maps)
+            self.render_front(title, art, error) 
