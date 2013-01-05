@@ -3,6 +3,7 @@ from google.appengine.ext import db
 import urllib2
 from xml.dom import minidom
 import logging
+from google.appengine.api import memcache
 
 GMAPS_URL = "http://maps.googleapis.com/maps/api/staticmap?size=380x263&sensor=false&"
 def gmaps_img(points):
@@ -35,13 +36,11 @@ class Art(db.Model):
     created = db.DateTimeProperty(auto_now_add = True)
     coordinates = db.GeoPtProperty()
 
-CACHE = {}
 def top_arts(update = False):
     key = 'top'
+    arts = memcache.get(key)
     
-    if not update and key in CACHE:
-        arts = CACHE[key]
-    else:
+    if arts is None or update:
         logging.error("DB QUERY")
         arts = db.GqlQuery("SELECT * "
                             "FROM Art "
@@ -49,7 +48,7 @@ def top_arts(update = False):
                             "LIMIT 10"
                             )
         arts = list(arts)
-        CACHE[key] = arts
+        memcache.set(key, arts)
 
     return arts
     
