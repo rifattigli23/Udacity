@@ -167,16 +167,19 @@ def all_posts(update = False):
         logging.error("CACHE UPDATED")
     
     return posts
+    
+def cache_age():
+    global CACHE_LAST_UPDATED
+    cache_age = '%d' % (time.time() - CACHE_LAST_UPDATED)
+    return cache_age
 
 class BlogFront(BlogHandler):
     def get(self):
         posts = all_posts()
-        global CACHE_LAST_UPDATED
-        cache_age = '%d' % (time.time() - CACHE_LAST_UPDATED)
         
         if self.format == 'html':
             self.render('front.html', posts = posts
-            ,cache_age = cache_age
+            ,cache_age = cache_age()
             )
         elif self.format == 'json':
             return self.render_json([p.as_dict() for p in posts])
@@ -191,7 +194,7 @@ class PostPage(BlogHandler):
             return
         
         if self.format == 'html':
-            self.render("permalink.html", post = post)
+            self.render("permalink.html", post = post, cache_age = cache_age())
         elif self.format == 'json':
             self.render_json(post.as_dict())
 
