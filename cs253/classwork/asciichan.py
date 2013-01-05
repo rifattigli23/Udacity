@@ -39,7 +39,6 @@ class Art(db.Model):
 def top_arts(update = False):
     key = 'top'
     arts = memcache.get(key)
-    
     if arts is None or update:
         logging.error("DB QUERY")
         arts = db.GqlQuery("SELECT * "
@@ -49,7 +48,7 @@ def top_arts(update = False):
                             )
         arts = list(arts)
         memcache.set(key, arts)
-
+    logging.error("ARTS = " + repr(arts))
     return arts
     
 class AsciiChan(basehandler.BaseHandler):
