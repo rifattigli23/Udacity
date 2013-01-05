@@ -172,10 +172,11 @@ class BlogFront(BlogHandler):
     def get(self):
         posts = all_posts()
         global CACHE_LAST_UPDATED
-        age = '%d' % (time.time() - CACHE_LAST_UPDATED)
+        cache_age = '%d' % (time.time() - CACHE_LAST_UPDATED)
+        
         if self.format == 'html':
             self.render('front.html', posts = posts
-            ,age = age
+            ,cache_age = cache_age
             )
         elif self.format == 'json':
             return self.render_json([p.as_dict() for p in posts])
