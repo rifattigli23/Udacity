@@ -6,6 +6,9 @@ import hmac
 from string import letters
 import json
 from time import strftime
+import time
+from google.appengine.api import memcache
+import logging
 
 import webapp2
 import jinja2
@@ -17,7 +20,8 @@ jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
                                 autoescape = True)
 
 secret = 'ohSoSecret'
-DATE_TIME_FORMAT = "%a %b %d %H:%M:%S %Y"
+
+CACHE_LAST_UPDATED = time.time()
 
 def render_str(template, **params):
     t = jinja_env.get_template(template)
@@ -150,11 +154,29 @@ class Post(db.Model):
              'last_modified': self.last_modified.strftime(time_fmt)}
         return d
 
+def all_posts(update = False):
+    key = 'posts'
+    posts = memcache.get(key)
+    if posts is None or update:
+        logging.error("DB QUERY")
+        posts = greetings = Post.all().order('-created')
+        posts = list(posts)
+        memcache.set(key, posts)
+        global CACHE_LAST_UPDATED
+        CACHE_LAST_UPDATED = time.time()
+        logging.error("CACHE UPDATED")
+    
+    return posts
+
 class BlogFront(BlogHandler):
     def get(self):
-        posts = greetings = Post.all().order('-created')
+        posts = all_posts()
+        global CACHE_LAST_UPDATED
+        age = '%d' % (time.time() - CACHE_LAST_UPDATED)
         if self.format == 'html':
-            self.render('front.html', posts = posts)
+            self.render('front.html', posts = posts
+            ,age = age
+            )
         elif self.format == 'json':
             return self.render_json([p.as_dict() for p in posts])
 
@@ -188,7 +210,13 @@ class NewPost(BlogHandler):
         
         if subject and content:
             p = Post(parent = blog_key(), subject = subject, content = content)
+            
+            #write to database
             p.put()
+            
+            #update cache
+            all_posts(True)
+            
             self.redirect('/blog/%s' % str(p.key().id()))
         else:
             error = "subject and content, please!"
