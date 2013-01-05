@@ -1,5 +1,4 @@
 
-# QUIZ implement the basic memcache functions
 
 CACHE = {}
 
@@ -10,7 +9,7 @@ def set(key, value):
 
 #return the value for key
 def get(key):
-    return CACHE.get(key, None)
+    return CACHE.get(key)
 
 #delete key from the cache
 def delete(key):
@@ -21,25 +20,48 @@ def delete(key):
 def flush():
     CACHE.clear()
 
-# print set('x', 1)
-# #>>> True
-# 
-# print get('x')
-# #>>> 1
-# 
-# print get('y')
-# #>>> None
-# 
-# delete('x')
-# print get('x')
-# #>>> None
-# 
-# print set('x', 1)
-# #>>> True
-# 
-# print get('x')
-# #>>> 1
-# 
-# flush()
-# print get('x')
-# #>>> None
+# QUIZ - implement gets() and cas() below
+#return a tuple of (value, h), where h is hash of the value. a simple hash
+#we can use here is hash(repr(val))
+def gets(key):
+    val = CACHE.get(key)
+    return val, hash(repr(val))
+
+# set key = value and return True if cas_unique matches the hash of the value
+# already in the cache. if cas_unique does not match the hash of the value in
+# the cache, don't set anything and return False.
+def cas(key, value, cas_unique):
+    ###Your cas code here.
+    val, h = gets(key)
+    
+    if h==cas_unique and set(key, value):
+        return True
+    else:
+        return False
+
+print set('x', 1)
+# >>> True
+
+print get('x')
+# >>> 1
+
+print get('y')
+# >>> None
+
+delete('x')
+print get('x')
+# >>> None
+
+set('x', 2)
+val, HASH = gets('x')
+print val, HASH
+# >>> 2, HASH
+
+print cas('x', 3, 0)
+# >>> False
+
+print cas('x', 4, HASH)
+# >>> True
+
+print get('x')
+# >>> 4
