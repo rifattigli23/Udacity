@@ -158,27 +158,6 @@ class BlogFront(BlogHandler):
         elif self.format == 'json':
             return self.render_json([p.as_dict() for p in posts])
 
-class BlogFrontJson(BlogHandler):
-    def get(self):
-        self.response.headers['Content-Type'] = 'application/json; charset=UTF-8'
-        
-        posts = greetings = Post.all().order('-created')
-        
-        # create a list of post dictionaries
-        post_list = []
-        
-        for post in posts:
-            post_list.append(
-                {"content": post.content,
-                "created": post.created.strftime(DATE_TIME_FORMAT),
-                "last_modified": post.last_modified.strftime(DATE_TIME_FORMAT),
-                "subject": post.subject}
-            )
-        
-        json_dump = json.dumps(post_list, sort_keys=True)
-        
-        self.write(json_dump)
-
 class PostPage(BlogHandler):
     def get(self, post_id):
         key = db.Key.from_path('Post', int(post_id), parent=blog_key())
@@ -192,25 +171,6 @@ class PostPage(BlogHandler):
             self.render("permalink.html", post = post)
         elif self.format == 'json':
             self.render_json(post.as_dict())
-
-class PostPageJson(BlogHandler):
-    def get(self, post_id):
-        self.response.headers['Content-Type'] = 'application/json; charset=UTF-8'
-        
-        key = db.Key.from_path('Post', int(post_id), parent=blog_key())
-        post = db.get(key)
-        
-        if not post:
-            self.error(404)
-            return
-        
-        json_dict = {"content": post.content,
-                    "created": post.created.strftime(DATE_TIME_FORMAT),
-                    "last_modified": post.last_modified.strftime(DATE_TIME_FORMAT),
-                    "subject": post.subject}
-        json_dump = json.dumps(json_dict, sort_keys=True)
-        
-        self.write(json_dump)
 
 class NewPost(BlogHandler):
     def get(self):
