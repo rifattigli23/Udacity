@@ -289,10 +289,6 @@ class Signup(BlogHandler):
     def done(self, *a, **kw):
         raise NotImplementedError
 
-class Unit2Signup(Signup):
-    def done(self):
-        self.redirect('/unit2/welcome?username=' + self.username)
-
 class Register(Signup):
     def done(self):
         #make sure the user doesn't already exist
@@ -305,7 +301,7 @@ class Register(Signup):
             u.put()
             
             self.login(u)
-            self.redirect('/blog')
+            self.render('welcome.html', username = self.username)
 
 class Login(BlogHandler):
     def get(self):
@@ -318,7 +314,7 @@ class Login(BlogHandler):
         u = User.login(username, password)
         if u:
             self.login(u)
-            self.redirect('/blog')
+            self.render('welcome.html', username = u.name)
         else:
             msg = 'Invalid login'
             self.render('login-form.html', error = msg)
@@ -345,7 +341,6 @@ class Welcome(BlogHandler):
 
 app = webapp2.WSGIApplication([('/', MainPage),
                                ('/unit2/rot13/?', Rot13),
-                               ('/unit2/signup/?', Unit2Signup),
                                ('/unit2/welcome/?', Welcome),
                                ('/blog/?(?:\.json)?', BlogFront),
                                ('/blog/([0-9]+)(?:\.json)?', PostPage),
