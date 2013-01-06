@@ -9,6 +9,7 @@ from time import strftime
 import time
 from google.appengine.api import memcache
 import logging
+from datetime import datetime, timedelta
 
 import webapp2
 import jinja2
@@ -20,8 +21,6 @@ jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
                                 autoescape = True)
 
 secret = 'ohSoSecret'
-
-CACHE_LAST_UPDATED = time.time()
 
 def render_str(template, **params):
     t = jinja_env.get_template(template)
@@ -85,6 +84,42 @@ class MainPage(BlogHandler):
     def get(self):
         self.render('table-of-contents.html')
 
+def age_set(key, val):
+    save_time = datetime.utcnow()
+    memcache.set(key, (val, save_time))
+    
+def age_get(key):
+    r = memcache.get(key)
+    if r:
+        val, save_time = r
+        age = (datetime.utcnow() - save_time).total_seconds()
+    else:
+        val, age = None, 0
+    
+    return val, age
+
+def add_post(post):
+    post.put()
+    get_posts(update = True)
+    return str(post.key().id())
+    
+def get_posts(update = False):
+    q = Post.all().order('-created').fetch(limit = 10)
+    mc_key = 'BLOGS'
+    
+    posts, age = age_get(mc_key)
+    if update or posts is None:
+        posts = list(q)
+        age_set(mc_key, posts)
+        
+    return posts, age
+    
+def age_str(age):
+    s = 'queried %s seconds ago'
+    age = int(age)
+    if age == 1:
+        s = s.replace('seconds', 'second')
+    return s % age    
 
 ##### user stuff
 def make_salt(length = 5):
@@ -154,48 +189,50 @@ class Post(db.Model):
              'last_modified': self.last_modified.strftime(time_fmt)}
         return d
 
-def all_posts(update = False):
-    key = 'posts'
-    posts = memcache.get(key)
-    if posts is None or update:
-        logging.error("DB QUERY")
-        posts = greetings = Post.all().order('-created')
-        posts = list(posts)
-        memcache.set(key, posts)
-        global CACHE_LAST_UPDATED
-        CACHE_LAST_UPDATED = time.time()
-        logging.error("CACHE UPDATED")
+# def all_posts(update = False):
+#     key = 'posts'
+#     posts = memcache.get(key)
+#     if posts is None or update:
+#         logging.error("DB QUERY")
+#         posts = greetings = Post.all().order('-created')
+#         posts = list(posts)
+#         memcache.set(key, posts)
+#         global CACHE_LAST_UPDATED
+#         CACHE_LAST_UPDATED = time.time()
+#         logging.error("CACHE UPDATED")
+#     
+#     return posts
     
-    return posts
-    
-def cache_age():
-    global CACHE_LAST_UPDATED
-    cache_age = '%d' % (time.time() - CACHE_LAST_UPDATED)
-    return cache_age
-
 class BlogFront(BlogHandler):
     def get(self):
-        
-        posts = all_posts()
+        posts, age = get_posts()
         
         if self.format == 'html':
             self.render('front.html', posts = posts
-            ,cache_age = cache_age()
+            ,age = age_str(age)
             )
         elif self.format == 'json':
             return self.render_json([p.as_dict() for p in posts])
 
 class PostPage(BlogHandler):
     def get(self, post_id):
-        key = db.Key.from_path('Post', int(post_id), parent=blog_key())
-        post = db.get(key)
+        post_key = 'POST_' + post_id
+        
+        post, age = age_get(post_key)
+        
+        #if post not returned, lookup from db
+        if not post:
+            key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+            post = db.get(key)
+            age_set(post_key, post)
+            age = 0
         
         if not post:
             self.error(404)
             return
         
         if self.format == 'html':
-            self.render("permalink.html", post = post, cache_age = cache_age())
+            self.render("permalink.html", post = post, age = age_str(age))
         elif self.format == 'json':
             self.render_json(post.as_dict())
 
@@ -216,11 +253,7 @@ class NewPost(BlogHandler):
         if subject and content:
             p = Post(parent = blog_key(), subject = subject, content = content)
             
-            #write to database
-            p.put()
-            
-            #update cache
-            all_posts(True)
+            add_post(p)
             
             self.redirect('/blog/%s' % str(p.key().id()))
         else:
