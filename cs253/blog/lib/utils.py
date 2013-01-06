@@ -2,6 +2,8 @@ import os
 import jinja2
 import hmac
 from google.appengine.ext import db
+from google.appengine.api import memcache
+from datetime import datetime, timedelta
 
 
 template_dir = os.path.join(os.path.dirname(__file__), '../templates')
@@ -22,7 +24,28 @@ def check_secure_val(secure_val):
     if secure_val == make_secure_val(val):
         return val
         
-        
 ##### blog stuff
 def blog_key(name = 'default'):
     return db.Key.from_path('blogs', name)
+    
+##### memcached stuff
+def age_set(key, val):
+    save_time = datetime.utcnow()
+    memcache.set(key, (val, save_time))
+    
+def age_get(key):
+    r = memcache.get(key)
+    if r:
+        val, save_time = r
+        age = (datetime.utcnow() - save_time).total_seconds()
+    else:
+        val, age = None, 0
+    
+    return val, age
+    
+def age_str(age):
+    s = 'queried %s seconds ago'
+    age = int(age)
+    if age == 1:
+        s = s.replace('seconds', 'second')
+    return s % age    
