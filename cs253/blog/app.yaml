@@ -13,7 +13,7 @@ handlers:
   upload: static/favicon.ico  
 
 - url: /.*
-  script: blog.app
+  script: main.app
 
 libraries:
 - name: PIL
