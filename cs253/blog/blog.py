@@ -175,6 +175,7 @@ def cache_age():
 
 class BlogFront(BlogHandler):
     def get(self):
+        
         posts = all_posts()
         
         if self.format == 'html':
@@ -226,6 +227,13 @@ class NewPost(BlogHandler):
             error = "subject and content, please!"
             self.render("newpost.html", subject = subject, content = content, error = error)
 
+class FlushCache(BlogHandler):
+    def get(self):
+        if self.request.url.endswith('flush'):
+            memcache.flush_all()
+        self.redirect('/blog')
+    
+    
 ###### Unit 2 HW's
 class Rot13(BlogHandler):
     def get(self):
@@ -353,5 +361,6 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ('/blog/login/?', Login),
                                ('/blog/logout/?', Logout),
                                ('/unit3/welcome/?', Unit3Welcome),
+                               ('/blog/flush/?', FlushCache)
                                ],
                               debug=True)
