@@ -1,8 +1,8 @@
-from BlogHandler import BlogHandler
+from MainHandler import MainHandler
 from lib import utils
 from lib.db.Post import Post
 
-class BlogFront(BlogHandler):
+class BlogFront(MainHandler):
     def get(self):
         posts, age = Post.get_posts()
         age_str = utils.age_str(age)

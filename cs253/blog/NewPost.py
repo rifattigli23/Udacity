@@ -1,4 +1,4 @@
-from BlogHandler import BlogHandler
+from MainHandler import MainHandler
 from lib import utils
 from lib.db.Post import Post
 import logging
@@ -8,7 +8,7 @@ def add_post(post):
     Post.get_posts(update = True)
     return str(post.key().id())
 
-class NewPost(BlogHandler):
+class NewPost(MainHandler):
     def get(self):
         if self.user:
             self.render("newpost.html")

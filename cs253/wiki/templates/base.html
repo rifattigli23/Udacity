@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link type="text/css" rel="stylesheet" href="/static/main.css" />
+  
+  <title>Wiki</title>
+</head>
+
+<body>
+  <a href="/blog" class ="main-title">
+    CS 253 Wiki
+  </a>
+  
+  <div clas="edit-area">
+
+  </div>
+  
+  <div class="login-area">
+    
+    {{edit | safe}} {{history | safe}} {{auth|safe}}
+    
+    <!-- <a class="login-link" href="/_edit/{{page_name}}">edit</a>
+        |
+        <a class="login-link" href="/">history</a>
+        
+        {% if user %}
+          {{user.name}} (<a class="login-link" href="/blog/logout">logout</a>)
+        {% else %}
+          <a class="login-link" href="/blog/login">login</a>
+          
+          <a class="login-link" href="/blog/signup">signup</a>
+        {% endif %} -->
+  </div>
+  
+  <div id="content">
+    {% block content %}
+    {% endblock %}
+  </div>
+
+</body>
+
+</html>
+    

@@ -1,6 +1,6 @@
-from BlogHandler import BlogHandler
+from MainHandler import MainHandler
 
-class Welcome(BlogHandler):            
+class Welcome(MainHandler):            
     def get(self):
         if self.user:
             self.render('welcome.html', username = self.user.name)

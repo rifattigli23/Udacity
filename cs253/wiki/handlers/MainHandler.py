@@ -1,8 +1,12 @@
 import webapp2
 from lib import utils
 from lib.db.User import User
+import logging
 
-class BlogHandler(webapp2.RequestHandler):
+class MainHandler(webapp2.RequestHandler):
+    
+    params = {} ## params contains key-value pairs used by jinja2 templates to render all html
+    
     def write(self, *a, **kw):
         self.response.out.write(*a, **kw)
     
@@ -30,6 +34,7 @@ class BlogHandler(webapp2.RequestHandler):
     
     def login(self, user):
         self.set_secure_cookie('user_id', str(user.key().id()))
+        self.make_logged_in_header()
     
     def logout(self):
         self.response.headers.add_header('Set-Cookie', 'user_id=; Path=/')
@@ -43,3 +48,45 @@ class BlogHandler(webapp2.RequestHandler):
             self.format = 'json'
         else:
             self.format = 'html'
+            
+        if self.user:
+            self.make_logged_in_header()
+        else:
+            self.make_logged_out_header()
+
+    def make_logged_out_header(self):
+        logging.error("make_logged_out_header()")
+        page = self.request.path
+        history_link = '/_history' + page
+        self.params['history'] = '<a href="%s">hisotry</a>' % history_link
+        self.params['auth'] = '<a href="/login">login</a>|<a href="/signup">signup</a>'
+        
+    def make_logged_in_header(self):
+        logging.error("make_logged_in_header()")
+        page = self.request.path
+        history_link = '/_history' + page
+        self.params['edit'] = '<a href="_edit%s">edit</a>' % page
+        self.params['history'] = '<a href="%s">history</a>' % history_link
+        self.params['auth'] = self.user.username + '(<a href="logout">logout</a>)'
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        

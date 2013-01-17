@@ -1,8 +1,8 @@
-from BlogHandler import BlogHandler
+from MainHandler import MainHandler
 from lib import utils
 from google.appengine.ext import db
 
-class PostPage(BlogHandler):
+class PostPage(MainHandler):
     def get(self, post_id):
         post_key = 'POST_' + post_id
         
