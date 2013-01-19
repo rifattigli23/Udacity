@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  {% for w in wikis %}
+    {{ w.render_version_row() | safe }}
+  {% endfor %}
+    
+{% endblock %}

@@ -5,6 +5,7 @@ from handlers.Logout import Logout
 from handlers.FlushCache import FlushCache
 from handlers.NewWiki import NewWiki
 from handlers.WikiEdit import WikiEdit
+from handlers.WikiHistory import WikiHistory
 
 import webapp2
 
@@ -15,6 +16,7 @@ app = webapp2.WSGIApplication([
                                ('/login/?', Login),
                                ('/logout/?', Logout),
                                ('/flush/?', FlushCache),
+                               ('/_history' + PAGE_RE, WikiHistory),
                                ('/_edit' + PAGE_RE, WikiEdit),
                                (PAGE_RE, NewWiki)
                                ],

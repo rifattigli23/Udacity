@@ -2,6 +2,7 @@ from MainHandler import MainHandler
 from lib import utils
 from google.appengine.ext import db
 from lib.db.Wiki import Wiki
+import logging
 
 class NewWiki(MainHandler):
     def get(self, page_name):
@@ -23,6 +24,7 @@ class NewWiki(MainHandler):
             self.params['wiki'] = wiki
             self.params['age'] = utils.age_str(age)
             self.render("wiki-page.html")
+            logging.error(Wiki.get_all_versions(page_name))
 
         #if url doesn't exist and user is logged in, redirect to WikiEdit.py
         elif not wiki and self.user:
