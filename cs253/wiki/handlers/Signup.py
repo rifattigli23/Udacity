@@ -26,26 +26,26 @@ class Signup(MainHandler):
         self.verify = self.request.get('verify')
         self.email = self.request.get('email')
         
-        params = dict(username = self.username,
-                      email = self.email)
+        self.params['username'] = self.username
+        self.params['email'] = self.email
         
         if not valid_username(self.username):
-            params['error_username'] = "That's not a valid username."
+            self.params['error_username'] = "That's not a valid username."
             have_error = True
         
         if not valid_password(self.password):
-            params['error_password'] = "That wasn't a valid password."
+            self.params['error_password'] = "That wasn't a valid password."
             have_error = True
         elif self.password != self.verify:
-            params['error_verify'] = "Your passwords didn't match."
+            self.params['error_verify'] = "Your passwords didn't match."
             have_error = True
         
         if not valid_email(self.email):
-            params['error_email'] = "That's not a valid email."
+            self.params['error_email'] = "That's not a valid email."
             have_error = True
         
         if have_error:
-            self.render('signup-form.html', **params)
+            self.render('signup-form.html')
         else:
             self.done()
     
