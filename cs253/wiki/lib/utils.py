@@ -11,6 +11,7 @@ jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
                                 autoescape = True)
 
 secret = 'ohSoSecret'
+domain_host = 'http://localhost:8080'
 
 def render_str(template, **params):
     t = jinja_env.get_template(template)
