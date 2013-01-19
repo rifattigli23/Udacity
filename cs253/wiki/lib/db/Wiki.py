@@ -8,5 +8,5 @@ class Wiki(db.Model):
     last_modified = db.DateTimeProperty(auto_now = True)
     
     def render(self):
-        self._render_text = self.content.replace('\n', '<br>')
-        return utils.render_str("wiki-content.html", w = self)
+        c = self.content.replace('\n', '<br>')
+        return c
