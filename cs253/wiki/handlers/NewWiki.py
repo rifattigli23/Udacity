@@ -15,13 +15,18 @@ class NewWiki(MainHandler):
             
             utils.age_set(wiki_key, wiki)
             age = 0    
-        
+
+        #if url exists, redirect to WikiPage        
         if wiki:
-            #if url exists, redirect to WikiPage
             self.params['wiki'] = wiki
-            self.params['age'] = 'AGE PLACEHOLDER'
+            self.params['age'] = 'AGE PLACEHOLDER' #TODO: add memcached age
             self.render("wiki-page.html")
-        else:
-            #if url doesn't exist, redirect to WikiEdit.py
+
+        #if url doesn't exist and user is logged in, redirect to WikiEdit.py
+        elif not wiki and self.user:
             self.redirect('/_edit%s' % page_name)
             return
+        
+        #if url doesn't exist and user is NOT logged in, redirect to login
+        else:
+            self.redirect('/login')
