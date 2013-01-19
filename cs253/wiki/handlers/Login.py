@@ -12,7 +12,7 @@ class Login(MainHandler):
         u = User.login(username, password)
         if u:
             self.login(u)
-            self.redirect('/welcome/?')
+            self.redirect('/')
         else:
             msg = 'Invalid login'
             self.params['msg'] = msg
