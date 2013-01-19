@@ -1,7 +1,6 @@
 from MainHandler import MainHandler
 import re
 
-
 ###### Signup Stuff
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
 def valid_username(username):

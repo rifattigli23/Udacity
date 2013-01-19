@@ -2,7 +2,6 @@ from MainHandler import MainHandler
 from lib import utils
 from google.appengine.ext import db
 
-
 class NewWiki(MainHandler):
     def get(self, page_name):
         wiki_key = 'WIKI_' + page_name 

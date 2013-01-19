@@ -64,7 +64,6 @@ class MainHandler(webapp2.RequestHandler):
         page = self.request.path
         history_link = '/_history' + page
         
-
         if '_edit' in self.request.path:
             # view wiki entry
             self.params['edit'] = '<a href="%s">view</a>' % page.replace('_edit/', '')
@@ -73,25 +72,3 @@ class MainHandler(webapp2.RequestHandler):
             self.params['edit'] = '<a href="_edit%s">edit</a>' % page
             self.params['history'] = '<a href="%s">history</a>' % history_link
             self.params['auth'] = self.user.name + '(<a href="/logout">logout</a>)'
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
