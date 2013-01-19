@@ -1,11 +1,14 @@
 from MainHandler import MainHandler
 from lib import utils
 from google.appengine.ext import db
+from lib.db.Wiki import Wiki
 
 class NewWiki(MainHandler):
     def get(self, page_name):
         wiki_key = 'WIKI_' + page_name 
-        wiki, age = utils.age_get(wiki_key)
+        # wiki, age = utils.age_get(wiki_key)
+        
+        wiki = Wiki.memcached_get(page_name)
         
         #if wiki not returned by memcached, lookup from db
         if not wiki:
@@ -15,7 +18,7 @@ class NewWiki(MainHandler):
             utils.age_set(wiki_key, wiki)
             age = 0    
 
-        #if url exists, redirect to WikiPage        
+        #if url exists, render to WikiPage        
         if wiki:
             self.params['wiki'] = wiki
             self.params['age'] = 'AGE PLACEHOLDER' #TODO: add memcached age

@@ -6,13 +6,14 @@ from lib.db.Wiki import Wiki
 
 def add_wiki(wiki):
     wiki.put()
-    # Wiki.get_wikis(update = True) #TODO: add memcache updating
+    wiki.memcached_put()
     return str(wiki.key().id())
 
 class WikiEdit(MainHandler):
     def get(self, page_name):
-        wiki_key = 'WIKI_' + page_name 
-        wiki, age = utils.age_get(wiki_key)
+        # wiki_key = 'WIKI_' + page_name 
+        #         wiki, age = utils.age_get(wiki_key)
+        wiki = Wiki.memcached_get(page_name)
         content = str()
         if wiki:
             content = wiki.content
