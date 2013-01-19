@@ -59,6 +59,7 @@ class MainHandler(webapp2.RequestHandler):
         history_link = '/_history' + page
         self.params['history'] = '<a href="%s">hisotry</a>' % history_link
         self.params['auth'] = '<a href="/login">login</a>|<a href="/signup">signup</a>'
+        self.params['edit'] = ''
         
     def make_logged_in_header(self):
         page = self.request.path
