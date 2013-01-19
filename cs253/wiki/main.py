@@ -3,7 +3,6 @@ from handlers.Register import Register
 from handlers.Login import Login
 from handlers.Logout import Logout
 from handlers.FlushCache import FlushCache
-from handlers.WikiFront import WikiFront
 from handlers.NewWiki import NewWiki
 from handlers.WikiEdit import WikiEdit
 
@@ -16,7 +15,6 @@ app = webapp2.WSGIApplication([
                                ('/login/?', Login),
                                ('/logout/?', Logout),
                                ('/flush/?', FlushCache),
-                               ('/', WikiFront),
                                ('/_edit' + PAGE_RE, WikiEdit),
                                (PAGE_RE, NewWiki)
                                ],
