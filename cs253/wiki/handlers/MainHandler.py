@@ -71,8 +71,8 @@ class MainHandler(webapp2.RequestHandler):
         else:
             # edit wiki entry
             self.params['edit'] = '<a href="_edit%s">edit</a>' % page
-        self.params['history'] = '<a href="%s">history</a>' % history_link
-        self.params['auth'] = self.user.name + '(<a href="%s/logout">logout</a>)' % utils.domain_host
+            self.params['history'] = '<a href="%s">history</a>' % history_link
+            self.params['auth'] = self.user.name + '(<a href="/logout">logout</a>)'
         
         
         
