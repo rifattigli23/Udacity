@@ -28,6 +28,11 @@ class WikiEdit(MainHandler):
             w = Wiki(parent = parent, key_name = page_name, name = page_name, content = content)
                    
             add_wiki(w)
-            self.redirect('%s%s' % (utils.domain_host, page_name))
+            
+            ## FIXME: localhost required the full host and page_name
+            # self.redirect('%s%s' % (utils.domain_host, page_name))
+           
+            ## FIXME: google app engine required just the page name (automatically appended it to the host)
+            self.redirect(page_name)
         else:
             self.write("Oops...we screwed up. Sorry about that!")
