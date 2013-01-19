@@ -1,6 +1,5 @@
 from MainHandler import MainHandler
 from lib import utils
-import logging
 from google.appengine.ext import db
 
 

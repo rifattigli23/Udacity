@@ -1,7 +1,6 @@
 from MainHandler import MainHandler
 from lib import utils
 from lib.db.Wiki import Wiki
-import logging
 
 #:TODO: add in user login checks before displaying content
 
@@ -12,7 +11,6 @@ def add_wiki(wiki):
 
 class WikiEdit(MainHandler):
     def get(self, page_name):
-        logging.error(page_name)
         wiki_key = 'WIKI_' + page_name 
         wiki, age = utils.age_get(wiki_key)
         content = str()
