@@ -10,12 +10,12 @@ class MainHandler(webapp2.RequestHandler):
     def write(self, *a, **kw):
         self.response.out.write(*a, **kw)
     
-    def render_str(self, template, **params):
-        params['user'] = self.user
-        return utils.render_str(template, **params)
+    def render_str(self, template):
+        self.params['user'] = self.user
+        return utils.render_str(template, **self.params)
     
-    def render(self, template, **kw):
-        self.write(self.render_str(template, **kw))
+    def render(self, template):
+        self.write(self.render_str(template))
     
     def render_json(self, d):
         json_txt = json.dumps(d)
@@ -34,6 +34,7 @@ class MainHandler(webapp2.RequestHandler):
     
     def login(self, user):
         self.set_secure_cookie('user_id', str(user.key().id()))
+        self.user = user
         self.make_logged_in_header()
     
     def logout(self):
@@ -43,6 +44,8 @@ class MainHandler(webapp2.RequestHandler):
         webapp2.RequestHandler.initialize(self, *a, **kw)
         uid = self.read_secure_cookie('user_id')
         self.user = uid and User.by_id(int(uid))
+        logging.error('SETTING SELF.USER')
+        logging.error(self.user)
         
         if self.request.url.endswith('.json'):
             self.format = 'json'
@@ -55,19 +58,24 @@ class MainHandler(webapp2.RequestHandler):
             self.make_logged_out_header()
 
     def make_logged_out_header(self):
-        logging.error("make_logged_out_header()")
         page = self.request.path
         history_link = '/_history' + page
         self.params['history'] = '<a href="%s">hisotry</a>' % history_link
         self.params['auth'] = '<a href="/login">login</a>|<a href="/signup">signup</a>'
         
     def make_logged_in_header(self):
-        logging.error("make_logged_in_header()")
         page = self.request.path
         history_link = '/_history' + page
-        self.params['edit'] = '<a href="_edit%s">edit</a>' % page
+        
+
+        if '_edit' in self.request.path:
+            # view wiki entry
+            self.params['edit'] = '<a href="%s">view</a>' % page.replace('_edit/', '')
+        else:
+            # edit wiki entry
+            self.params['edit'] = '<a href="_edit%s">edit</a>' % page
         self.params['history'] = '<a href="%s">history</a>' % history_link
-        self.params['auth'] = self.user.username + '(<a href="logout">logout</a>)'
+        self.params['auth'] = self.user.name + '(<a href="%s/logout">logout</a>)' % utils.domain_host
         
         
         
