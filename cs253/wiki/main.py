@@ -1,5 +1,5 @@
 from handlers.MainHandler import MainHandler
-from handlers.Register import Register
+from handlers.Signup import Signup
 from handlers.Login import Login
 from handlers.Logout import Logout
 from handlers.FlushCache import FlushCache
@@ -11,7 +11,7 @@ import webapp2
 PAGE_RE = r'(/(?:[a-zA-Z0-9_-]+/?)*)'
 
 app = webapp2.WSGIApplication([
-                               ('/signup/?', Register),
+                               ('/signup/?', Signup),
                                ('/login/?', Login),
                                ('/logout/?', Logout),
                                ('/flush/?', FlushCache),

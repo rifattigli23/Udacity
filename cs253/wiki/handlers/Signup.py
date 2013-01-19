@@ -1,5 +1,6 @@
 from MainHandler import MainHandler
 import re
+from lib.db.User import User
 
 ###### Signup Stuff
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
@@ -48,5 +49,17 @@ class Signup(MainHandler):
         else:
             self.done()
     
-    def done(self, *a, **kw):
-        raise NotImplementedError
+    def done(self):
+        #make sure the user doesn't already exist
+        u = User.by_name(self.username)
+        if u:
+            msg = 'That user already exists.'
+            self.params['error_username'] = msg
+            self.render('signup-form.html')
+        else:
+            u = User.register(self.username, self.password, self.email)
+            u.put()
+            
+            self.login(u)
+            self.redirect('/welcome/?')
+        
