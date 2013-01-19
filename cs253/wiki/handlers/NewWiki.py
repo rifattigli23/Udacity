@@ -19,8 +19,10 @@ class NewWiki(MainHandler):
         
         if wiki:
             #if url exists, redirect to WikiPage
-            self.render("wiki-page.html", wiki=wiki, age='AGE PLACEHOLDER')
+            self.params['wiki'] = wiki
+            self.params['age'] = 'AGE PLACEHOLDER'
+            self.render("wiki-page.html")
         else:
             #if url doesn't exist, redirect to WikiEdit.py
-            self.redirect('/_edit/%s' % page_name)
+            self.redirect('/_edit%s' % page_name)
             return

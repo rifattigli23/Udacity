@@ -12,7 +12,8 @@ class Login(MainHandler):
         u = User.login(username, password)
         if u:
             self.login(u)
-            self.redirect('/blog/welcome/?')
+            self.redirect('/welcome/?')
         else:
             msg = 'Invalid login'
-            self.render('login-form.html', error = msg)
+            self.params['msg'] = msg
+            self.render('login-form.html')

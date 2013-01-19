@@ -19,7 +19,8 @@ class WikiEdit(MainHandler):
         if wiki:
             content = wiki.content
         
-        self.render('wiki-edit.html', content=content)
+        self.params['content'] = content
+        self.render('wiki-edit.html')
 
     def post(self, page_name):
         content = self.request.get('content')
@@ -29,6 +30,6 @@ class WikiEdit(MainHandler):
             w = Wiki(parent = parent, key_name = page_name, name = page_name, content = content)
                    
             add_wiki(w)
-            self.redirect('/%s' % page_name)
+            self.redirect('%s%s' % (utils.domain_host, page_name))
         else:
             self.write("Oops...we screwed up. Sorry about that!")
