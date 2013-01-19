@@ -1,7 +1,6 @@
 import webapp2
 from lib import utils
 from lib.db.User import User
-import logging
 
 class MainHandler(webapp2.RequestHandler):
     
@@ -44,8 +43,6 @@ class MainHandler(webapp2.RequestHandler):
         webapp2.RequestHandler.initialize(self, *a, **kw)
         uid = self.read_secure_cookie('user_id')
         self.user = uid and User.by_id(int(uid))
-        logging.error('SETTING SELF.USER')
-        logging.error(self.user)
         
         if self.request.url.endswith('.json'):
             self.format = 'json'

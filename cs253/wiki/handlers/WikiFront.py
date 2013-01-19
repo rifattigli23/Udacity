@@ -1,5 +1,4 @@
 from MainHandler import MainHandler
-import logging
 
 class WikiFront(MainHandler):
     def get(self):
