@@ -6,9 +6,9 @@ from lib.db.Wiki import Wiki
 class NewWiki(MainHandler):
     def get(self, page_name):
         wiki_key = 'WIKI_' + page_name 
-        # wiki, age = utils.age_get(wiki_key)
+        wiki, age = utils.age_get(wiki_key)
         
-        wiki = Wiki.memcached_get(page_name)
+        # wiki = Wiki.memcached_get(page_name)
         
         #if wiki not returned by memcached, lookup from db
         if not wiki:
@@ -21,7 +21,7 @@ class NewWiki(MainHandler):
         #if url exists, render to WikiPage        
         if wiki:
             self.params['wiki'] = wiki
-            self.params['age'] = 'AGE PLACEHOLDER' #TODO: add memcached age
+            self.params['age'] = utils.age_str(age)
             self.render("wiki-page.html")
 
         #if url doesn't exist and user is logged in, redirect to WikiEdit.py
