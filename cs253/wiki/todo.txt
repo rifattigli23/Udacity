@@ -1,8 +1,0 @@
-Wiki
-
-If you visit a URL that exists, the content for that URL will be displayed.
-If you visit a URL that does not exist, you are redirected to HOST/_edit/... where you can edit the content. 
-Click save to redirect to HOST/.. which will display the content
-
-If you are logged out, edit link is hidden.
-
