@@ -9,13 +9,15 @@ from handlers.WikiEdit import WikiEdit
 
 import webapp2
 
+PAGE_RE = r'(/(?:[a-zA-Z0-9_-]+/?)*)'
+
 app = webapp2.WSGIApplication([
-                               ('/blog/signup/?', Register),
-                               ('/blog/login/?', Login),
-                               ('/blog/logout/?', Logout),
-                               ('/blog/flush/?', FlushCache),
+                               ('/signup/?', Register),
+                               ('/login/?', Login),
+                               ('/logout/?', Logout),
+                               ('/flush/?', FlushCache),
                                ('/', WikiFront),
-                               ('/_edit/(.*)/?', WikiEdit),
-                               ('/(.*)/?', NewWiki)
+                               ('/_edit' + PAGE_RE, WikiEdit),
+                               (PAGE_RE, NewWiki)
                                ],
                               debug=True)
