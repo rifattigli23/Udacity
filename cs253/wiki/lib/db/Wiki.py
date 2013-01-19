@@ -9,4 +9,4 @@ class Wiki(db.Model):
     
     def render(self):
         self._render_text = self.content.replace('\n', '<br>')
-        return utils.render_str("wiki.html", w = self)
+        return utils.render_str("wiki-content.html", w = self)
