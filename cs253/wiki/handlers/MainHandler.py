@@ -1,6 +1,7 @@
 import webapp2
 from lib import utils
 from lib.db.User import User
+import logging  
 
 class MainHandler(webapp2.RequestHandler):
     
@@ -65,11 +66,15 @@ class MainHandler(webapp2.RequestHandler):
         page = self.request.path
         history_link = '/_history' + page
         
+        self.params['edit'] = '<a href="_edit%s">edit</a>' % page
+        self.params['history'] = '<a href="%s">history</a>' % history_link
+        self.params['auth'] = self.user.name + '(<a href="/logout">logout</a>)'
+        logging.error(self.request.path)
+        
         if '_edit' in self.request.path:
             # view wiki entry
             self.params['edit'] = '<a href="%s">view</a>' % page.replace('_edit/', '')
-        else:
-            # edit wiki entry
-            self.params['edit'] = '<a href="_edit%s">edit</a>' % page
-            self.params['history'] = '<a href="%s">history</a>' % history_link
-            self.params['auth'] = self.user.name + '(<a href="/logout">logout</a>)'
+        
+        if '_history' in self.request.path:
+            self.params['edit'] = ''
+            self.params['history'] = ''
