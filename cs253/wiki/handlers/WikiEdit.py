@@ -7,12 +7,11 @@ from lib.db.Wiki import Wiki
 def add_wiki(wiki):
     wiki.put()
     wiki.memcached_put()
+    Wiki.get_all_versions(wiki.name, update = True)
     return str(wiki.key().id())
 
 class WikiEdit(MainHandler):
     def get(self, page_name):
-        # wiki_key = 'WIKI_' + page_name 
-        #         wiki, age = utils.age_get(wiki_key)
         wiki = Wiki.memcached_get(page_name)
         content = str()
         if wiki:

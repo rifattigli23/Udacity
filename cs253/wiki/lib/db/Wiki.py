@@ -28,12 +28,15 @@ class Wiki(db.Model):
     def get_all_versions(cls, page_name, update = False):
         # q = Wiki.all().order('-created').fetch(limit = 10)
         # q = Wiki.get_by_key_name(page_name, parent = utils.wiki_key()).order('-created')
-        q = Wiki.gql("WHERE name = :name ORDER BY created", name=page_name)
         mc_key = page_name + '_VERSIONS'
+
     
         wikis, age = utils.age_get(mc_key)
         if update or wikis is None:
-            wikis = list(q)
+            # wikis = list(q)
+            q = Wiki.gql("WHERE name = :name ORDER BY created DESC", name=page_name)
+            wikis = q.fetch(limit = None)
+            
             utils.age_set(mc_key, wikis)
             
         return wikis
