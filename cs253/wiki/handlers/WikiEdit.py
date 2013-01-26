@@ -24,7 +24,6 @@ class WikiEdit(MainHandler):
     def post(self, page_name):
         content = self.request.get('content')
         parent = utils.wiki_key()
-
-        w = Wiki(parent = parent, key_name = page_name, name = page_name, content = content)  
+        w = Wiki(parent = parent, name = page_name, content = content)  
         add_wiki(w)
         self.redirect(page_name)
