@@ -13,8 +13,13 @@ class NewWiki(MainHandler):
         
         #if wiki not returned by memcached, lookup from db
         if not wiki:
-            key = db.Key.from_path('Wiki', page_name, parent=utils.wiki_key())        
-            wiki = db.get(key)
+            # key = db.Key.from_path('Wiki', page_name, parent=utils.wiki_key())        
+            # wiki = db.get(key)
+            
+            #get wiki from db via gql query 
+            query = Wiki.gql("WHERE name =:page_name ORDER BY created desc LIMIT 1", page_name = page_name)
+            wikis = query.fetch(limit=1)
+            wiki = wikis[0]
             
             utils.age_set(wiki_key, wiki)
             age = 0    
