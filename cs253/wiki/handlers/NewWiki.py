@@ -19,13 +19,15 @@ class NewWiki(MainHandler):
             #get wiki from db via gql query 
             query = Wiki.gql("WHERE name =:page_name ORDER BY created desc LIMIT 1", page_name = page_name)
             wikis = query.fetch(limit=1)
-            wiki = wikis[0]
             
-            utils.age_set(wiki_key, wiki)
-            age = 0    
+            if len(wikis) > 0:
+                wiki = wikis[0]
+                utils.age_set(wiki_key, wiki)
+                age = 0
+               
 
         #if url exists, render to WikiPage        
-        if wiki:
+        if wiki:            
             self.params['wiki'] = wiki
             self.params['age'] = utils.age_str(age)
             self.render("wiki-page.html")
