@@ -8,6 +8,9 @@ class Wiki(db.Model):
     content = db.TextProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
     last_modified = db.DateTimeProperty(auto_now = True)
+    version = db.IntegerProperty(required = True)
+    #TODO: add version property, URI Routing for ?v variable, and query logic to retreive the correct version 
+    #following the "view" link on the history pagek
     
     def render(self):
         c = self.content.replace('\n', '<br>')
@@ -40,3 +43,16 @@ class Wiki(db.Model):
             utils.age_set(mc_key, wikis)
             
         return wikis
+        
+    @classmethod
+    def get_max_version(cls, page_name, update = False):
+        versions = cls.get_all_versions(page_name, update)
+        if len(versions) > 0:
+            # versions should be ordered by descending created times
+            return versions[0]
+            
+            
+        
+        
+        
+        

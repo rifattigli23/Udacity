@@ -6,34 +6,41 @@ import logging
 
 class NewWiki(MainHandler):
     def get(self, page_name):
-        wiki_key = 'WIKI_' + page_name 
-        wiki, age = utils.age_get(wiki_key)
-        
-        # wiki = Wiki.memcached_get(page_name)
-        
+
+        # if version requested, return appropriate wiki version
+        version = self.request.get('v', '')
+        logging.error('WIKI VERSION REQUEST = ' + version)
+
+        #MEMCACHED DISABLED
+        wiki = ''
+        wiki_key = ''
+        # wiki_key = 'WIKI_' + page_name 
+        # wiki, age = utils.age_get(wiki_key)
+                
         #if wiki not returned by memcached, lookup from db
         if not wiki:
-            # key = db.Key.from_path('Wiki', page_name, parent=utils.wiki_key())        
-            # wiki = db.get(key)
-            
             #get wiki from db via gql query 
-            query = Wiki.gql("WHERE name =:page_name ORDER BY created desc LIMIT 1", page_name = page_name)
+            
+            if version != '':
+                query = Wiki.gql("WHERE name =:page_name AND version =:version ORDER BY created desc LIMIT 1", page_name = page_name, version = int(version))
+            else:            
+                query = Wiki.gql("WHERE name =:page_name ORDER BY created desc LIMIT 1", page_name = page_name)
+
             wikis = query.fetch(limit=1)
             
             if len(wikis) > 0:
                 wiki = wikis[0]
+                logging.error('WIKI VERSION ACTUAL = ' + str(wiki.version))
                 utils.age_set(wiki_key, wiki)
-                age = 0
-               
+                age = 0               
 
-        #if url exists, render to WikiPage        
+        #if wiki exists, render WikiPage        
         if wiki:            
             self.params['wiki'] = wiki
             self.params['age'] = utils.age_str(age)
             self.render("wiki-page.html")
-            logging.error(Wiki.get_all_versions(page_name))
 
-        #if url doesn't exist and user is logged in, redirect to WikiEdit.py
+        #if wiki doesn't exist and user is logged in, redirect to WikiEdit.py
         elif not wiki and self.user:
             self.redirect('/_edit%s' % page_name)
             return
