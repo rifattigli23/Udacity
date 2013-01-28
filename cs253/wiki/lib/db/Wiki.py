@@ -8,7 +8,6 @@ class Wiki(db.Model):
     content = db.TextProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
     last_modified = db.DateTimeProperty(auto_now = True)
-    version = db.IntegerProperty(required = True)
     
     def render(self):
         c = self.content.replace('\n', '<br>')
@@ -22,7 +21,7 @@ class Wiki(db.Model):
         utils.age_set(MEMCACHED_PREFIX + self.name, self)
 
         # set value for memcached key with version
-        utils.age_set(MEMCACHED_PREFIX + self.name + str(self.version), self)
+        utils.age_set(MEMCACHED_PREFIX + self.name + str(self.key().id()), self)
         
         
     @classmethod    
@@ -46,13 +45,6 @@ class Wiki(db.Model):
             utils.age_set(mc_key, wikis)
             
         return wikis
-        
-    @classmethod
-    def get_max_version(cls, page_name, update = False):
-        versions = cls.get_all_versions(page_name, update)
-        if len(versions) > 0:
-            # versions should be ordered by descending created times
-            return versions[0]
             
             
         

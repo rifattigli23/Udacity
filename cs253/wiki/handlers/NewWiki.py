@@ -22,15 +22,14 @@ class NewWiki(MainHandler):
             #get wiki from db via gql query 
             
             if version != '':
-                query = Wiki.gql("WHERE name =:page_name AND version =:version ORDER BY created desc LIMIT 1", page_name = page_name, version = int(version))
+                wiki = Wiki.get_by_id(int(version), utils.wiki_key())
+                logging.error("WIKI GET_BY_ID = " + repr(wiki))
             else:            
                 query = Wiki.gql("WHERE name =:page_name ORDER BY created desc LIMIT 1", page_name = page_name)
-
-            wikis = query.fetch(limit=1)
-            
-            if len(wikis) > 0:
-                wiki = wikis[0]
-                logging.error('WIKI VERSION ACTUAL = ' + str(wiki.version))
+                wikis = query.fetch(limit=1)
+                if len(wikis) > 0:
+                    wiki = wikis[0]
+            if wiki:
                 utils.age_set(wiki_key, wiki)
                 age = 0               
 

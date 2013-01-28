@@ -28,14 +28,7 @@ class WikiEdit(MainHandler):
     def post(self, page_name):
         content = self.request.get('content')
         parent = utils.wiki_key()
-        
-        #TODO: replace this version logic with use of Google's auto incrementing IDs
-        max_version = Wiki.get_max_version(page_name, update = True)
-        if max_version:
-            version = max_version.version + 1
-        else:
-            version = 1
             
-        w = Wiki(parent = parent, name = page_name, content = content, version = version)  
+        w = Wiki(parent = parent, name = page_name, content = content)  
         add_wiki(w)
         self.redirect(page_name)

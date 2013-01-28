@@ -12,6 +12,13 @@ indexes:
 
 - kind: Wiki
   properties:
+  - name: ID
+  - name: name
+  - name: created
+    direction: desc
+
+- kind: Wiki
+  properties:
   - name: name
   - name: created
 
