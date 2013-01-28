@@ -12,7 +12,12 @@ def add_wiki(wiki):
 
 class WikiEdit(MainHandler):
     def get(self, page_name):
-        wiki = Wiki.memcached_get(page_name)
+        version = self.request.get('v', None)
+        
+        if version:
+            wiki = Wiki.memcached_get(page_name, version)            
+        else:
+            wiki = Wiki.memcached_get(page_name)
         content = str()
         if wiki:
             content = wiki.content
@@ -24,7 +29,7 @@ class WikiEdit(MainHandler):
         content = self.request.get('content')
         parent = utils.wiki_key()
         
-        # 
+        #TODO: replace this version logic with use of Google's auto incrementing IDs
         max_version = Wiki.get_max_version(page_name, update = True)
         if max_version:
             version = max_version.version + 1

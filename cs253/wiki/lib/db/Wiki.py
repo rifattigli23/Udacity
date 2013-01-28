@@ -9,8 +9,6 @@ class Wiki(db.Model):
     created = db.DateTimeProperty(auto_now_add = True)
     last_modified = db.DateTimeProperty(auto_now = True)
     version = db.IntegerProperty(required = True)
-    #TODO: add version property, URI Routing for ?v variable, and query logic to retreive the correct version 
-    #following the "view" link on the history pagek
     
     def render(self):
         c = self.content.replace('\n', '<br>')
@@ -20,11 +18,16 @@ class Wiki(db.Model):
         return utils.render_str("wiki-history-row.html", w = self)
     
     def memcached_put(self):
+        # overwrite "current" memcached version without version name in key (one for each name)
         utils.age_set(MEMCACHED_PREFIX + self.name, self)
+
+        # set value for memcached key with version
+        utils.age_set(MEMCACHED_PREFIX + self.name + str(self.version), self)
+        
         
     @classmethod    
-    def memcached_get(cls, page_name):
-        wiki, age = utils.age_get(MEMCACHED_PREFIX + page_name)
+    def memcached_get(cls, page_name, version=''):
+        wiki, age = utils.age_get(MEMCACHED_PREFIX + page_name + version)
         return wiki
     
     @classmethod
