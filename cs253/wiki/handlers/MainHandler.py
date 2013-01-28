@@ -66,7 +66,10 @@ class MainHandler(webapp2.RequestHandler):
         page = self.request.path
         history_link = '/_history' + page
         
-        self.params['edit'] = '<a href="_edit%s">edit</a>' % page
+        if self.request.get('v', None):
+            self.params['edit'] = '<a href="_edit%s?v=%s">edit</a>' % (page, self.request.get('v'))
+        else:
+            self.params['edit'] = '<a href="_edit%s">edit</a>' % page
         self.params['history'] = '<a href="%s">history</a>' % history_link
         self.params['auth'] = self.user.name + '(<a href="/logout">logout</a>)'
         logging.error(self.request.path)
