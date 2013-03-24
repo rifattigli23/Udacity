@@ -1,4 +1,5 @@
 ## Udacity CS101 Web Crawler
+import urllib2
 
 def get_next_target(page):
     start_link = page.find('<a href=')
@@ -20,3 +21,34 @@ def get_all_links(page):
         else:
             break
     return links
+
+def get_page(url):
+    usock = urllib2.urlopen(url)
+    html = usock.read()
+    usock.close()
+    return html
+
+def crawl(seed):
+    tocrawl = [seed]
+    crawled = []
+    
+    while tocrawl:
+        next_crawl = tocrawl.pop()
+        print 'next_crawl = ' + str(next_crawl)
+        # add link targets on this page to tocrawl
+        page = get_page(next_crawl)
+        page_links = get_all_links(page)
+        print 'page_links = ' + str(page_links)
+        
+        for link in page_links:
+            if link not in crawled:
+                tocrawl.append(link)
+        # tocrawl += page_links
+        # add page to crawled
+        crawled.append(next_crawl)
+    return crawled
+        
+
+seed = 'http://www.udacity.com/cs101x/index.html'
+
+print crawl(seed)
