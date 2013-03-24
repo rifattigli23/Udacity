@@ -34,20 +34,12 @@ def crawl(seed):
     
     while tocrawl:
         next_crawl = tocrawl.pop()
-        print 'next_crawl = ' + str(next_crawl)
-        # add link targets on this page to tocrawl
-        page = get_page(next_crawl)
-        page_links = get_all_links(page)
-        print 'page_links = ' + str(page_links)
-        
-        for link in page_links:
-            if link not in crawled:
-                tocrawl.append(link)
-        # tocrawl += page_links
-        # add page to crawled
+        if next_crawl not in crawled:
+            page = get_page(next_crawl)
+            page_links = get_all_links(page)
+            tocrawl += page_links
         crawled.append(next_crawl)
     return crawled
-        
 
 seed = 'http://www.udacity.com/cs101x/index.html'
 
