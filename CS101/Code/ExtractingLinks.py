@@ -22,13 +22,28 @@ def lookup(index,keyword):
         if (entry[0] == keyword):
             return entry[1]
     return []
-
-def add_to_index(index,keyword,url):
+    
+def record_user_click(index,keyword,url):
     for entry in index:
         if entry[0] == keyword:
-            entry[1].append(url)
+            for element in entry[1]:
+                if element[0] == url:
+                    element[1] += 1
+
+def add_to_index(index, keyword, url):
+    # loop through existing keywords
+    for entry in index:
+        # check if current keyword matches our parameter value
+        if entry[0] == keyword:
+            # loop through existing url-count lists
+            for url_and_count in entry[1]:
+                if url_and_count[0] == url:
+                    return
+            # if we leave loop, url does not yet exist, so append it
+            entry[1].append([url, 0])
             return
-    index.append([keyword,[url]])
+    # not found, add new keyword to index
+    index.append([keyword, [[url, 0]]])  
 
 def add_page_to_index(index,url,content):
     contentList = content.split()
