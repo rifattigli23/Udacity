@@ -24,11 +24,11 @@ def lookup(index,keyword):
     return []
     
 def record_user_click(index,keyword,url):
-    for entry in index:
-        if entry[0] == keyword:
-            for element in entry[1]:
-                if element[0] == url:
-                    element[1] += 1
+    urls = lookup(index, keyword)
+    if urls:
+        for entry in urls:
+            if entry[0] == url:
+                entry[1] += 1
 
 def add_to_index(index, keyword, url):
     # loop through existing keywords
