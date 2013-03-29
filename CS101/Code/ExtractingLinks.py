@@ -37,7 +37,7 @@ def crawl(seed):
         if next_crawl not in crawled:
             page = get_page(next_crawl)
             page_links = get_all_links(page)
-            tocrawl += page_links
+            union(tocrawl, page_links)
         crawled.append(next_crawl)
     return crawled
 
