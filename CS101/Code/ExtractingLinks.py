@@ -54,10 +54,11 @@ def get_all_links(page):
     return links
 
 def get_page(url):
-    usock = urllib2.urlopen(url)
-    html = usock.read()
-    usock.close()
-    return html
+    try:
+        import urllib
+        return urllib.urlopen(url).read()
+    except:
+        return ""
     
 def crawl(seed):
     tocrawl = [seed]
