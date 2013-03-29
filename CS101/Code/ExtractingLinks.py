@@ -6,6 +6,13 @@ import urllib2
 ##    
 def union(a,b):
     return list(set(a+b))
+
+def split_string(source,splitlist):    
+    default_sep = splitlist[0]
+    for sep in splitlist[1:]:
+        source = source.replace(sep, default_sep)
+    return [i.strip() for i in source.split(default_sep) if i != '']
+
     
 ##
 #   Index Stuff
