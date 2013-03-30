@@ -13,12 +13,46 @@ def split_string(source,splitlist):
         source = source.replace(sep, default_sep)
     return [i.strip() for i in source.split(default_sep) if i != '']
 
+##
+# Hash Stuff
+##    
+
 def hash_string(keyword,buckets):
     sum = 0
     for c in keyword:
         sum += ord(c)
     return sum % buckets  
     
+def make_hashtable(nbuckets):
+    hashtable = []
+    for n in range(nbuckets):
+        hashtable.append([])
+    return hashtable
+
+def hashtable_get_bucket(htable,keyword):
+    return htable[hash_string(keyword, len(htable))]
+    
+def hashtable_add_entry(htable, key, value):
+    bucket = hashtable_get_bucket(htable, key)
+    bucket.append([key, value])
+    
+def hashtable_lookup(htable, key):
+    bucket = hashtable_get_bucket(htable, key)
+    for element in bucket:
+        if element[0] == key:
+            return element[1]
+    return None
+
+def hashtable_update(htable, key, value):
+    if hashtable_lookup(htable, key):
+        bucket = hashtable_get_bucket(htable, key)
+        for element in bucket:
+            if element[0] == key:
+                element[1] = value
+    else:
+        hashtable_add_entry(htable, key, value)
+    return htable
+
 ##
 #   Index Stuff
 ##    
@@ -107,7 +141,11 @@ def crawl(seed):
 # TESTING
 ##
 
-# execution timer
+## test seed crawl
+# seed = 'http://www.udacity.com/cs101x/index.html'
+# print crawl(seed)
+
+## execution timer
 import time
 
 def time_execution(code):
@@ -122,7 +160,7 @@ def spin_loop(n):
         i = i + 1
     return i
 
-# make big indexes
+## make big indexes
 def make_string(p):
     s = ""
     for e in p:
@@ -142,11 +180,22 @@ def make_big_index(size):
             else:
                 letters[i] = 'a'
     return index
+    
+## test hash function
+def test_hash_function(func, keys, size):
+    results = [0] * size 
+    keys_used = []
+    for w in keys:
+        if w not in keys_used:
+            hv = func(w, size)
+            results[hv] += 1
+            keys_used.append(w)
+    return results
 
-seed = 'http://www.udacity.com/cs101x/index.html'
+# index10000 = make_big_index(10000)
+# time_execution('lookup(index10000, "udacity")')
 
-# print crawl(seed)
-
-index10000 = make_big_index(10000)
-time_execution('lookup(index10000, "udacity")')
+# words = get_page('http://zachholman.com/').split()
+# counts = test_hash_function(hash_string, words, 12)
+# print counts
 
