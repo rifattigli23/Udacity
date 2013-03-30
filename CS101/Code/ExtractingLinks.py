@@ -57,11 +57,11 @@ def hashtable_update(htable, key, value):
 #   Index Stuff
 ##    
 def lookup(index,keyword):
-    for entry in index:
-        if (entry[0] == keyword):
-            return entry[1]
-    return []
-    
+    if keyword in index:
+        return index[keyword]
+    else:
+        return None
+            
 def record_user_click(index,keyword,url):
     urls = lookup(index, keyword)
     if urls:
@@ -70,19 +70,10 @@ def record_user_click(index,keyword,url):
                 entry[1] += 1
 
 def add_to_index(index, keyword, url):
-    # loop through existing keywords
-    for entry in index:
-        # check if current keyword matches our parameter value
-        if entry[0] == keyword:
-            # loop through existing url-count lists
-            for url_and_count in entry[1]:
-                if url_and_count[0] == url:
-                    return
-            # if we leave loop, url does not yet exist, so append it
-            entry[1].append([url, 0])
-            return
-    # not found, add new keyword to index
-    index.append([keyword, [[url, 0]]])  
+    if keyword in index:
+        index[keyword].append(url)
+    else:
+        index[keyword] = value
 
 def add_page_to_index(index,url,content):
     contentList = content.split()
@@ -124,7 +115,7 @@ def get_page(url):
 def crawl(seed):
     tocrawl = [seed]
     crawled = []
-    index = []
+    index = {}
     
     while tocrawl:
         next_crawl = tocrawl.pop()
