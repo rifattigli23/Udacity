@@ -4,9 +4,6 @@ import urllib2
 ##
 #   Utilities
 ##    
-def union(a,b):
-    return list(set(a+b))
-
 def split_string(source,splitlist):    
     default_sep = splitlist[0]
     for sep in splitlist[1:]:
@@ -121,8 +118,8 @@ def get_page(url):
         return ""
     
 def crawl(seed):
-    tocrawl = [seed]
-    crawled = []
+    tocrawl = set([seed])
+    crawled = set()
     index = {}
     graph = {}
     
@@ -132,11 +129,10 @@ def crawl(seed):
             page = get_page(next_crawl)
             add_page_to_index(index,next_crawl,page)
             outlinks = get_all_links(page)
-            union(tocrawl, outlinks)
-            crawled.append(next_crawl)
-            
-            #update graph
             graph[next_crawl] = outlinks
+            tocrawl.update(outlinks)
+            crawled.add(next_crawl)
+
 
     return index, graph
 
@@ -251,6 +247,5 @@ def test_hash_function(func, keys, size):
 ## test compute_ranks()
 index, graph = crawl('http://www.udacity.com/cs101x/urank/index.html')
 ranks = compute_ranks(graph)
-
 print ranks
 
