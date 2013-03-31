@@ -132,7 +132,8 @@ def crawl(seed):
             add_page_to_index(index,next_crawl,page)
             page_links = get_all_links(page)
             union(tocrawl, page_links)
-        crawled.append(next_crawl)
+            crawled.append(next_crawl)
+
     return index
 
 
