@@ -79,9 +79,9 @@ def record_user_click(index,keyword,url):
 
 def add_to_index(index, keyword, url):
     if keyword in index:
-        index[keyword].append(url)
+        index[keyword] = (url)
     else:
-        index[keyword] = value
+        index[keyword] = url
 
 def add_page_to_index(index,url,content):
     contentList = content.split()
@@ -124,17 +124,21 @@ def crawl(seed):
     tocrawl = [seed]
     crawled = []
     index = {}
+    graph = {}
     
     while tocrawl:
         next_crawl = tocrawl.pop()
         if next_crawl not in crawled:
             page = get_page(next_crawl)
             add_page_to_index(index,next_crawl,page)
-            page_links = get_all_links(page)
-            union(tocrawl, page_links)
+            outlinks = get_all_links(page)
+            union(tocrawl, outlinks)
             crawled.append(next_crawl)
+            
+            #update graph
+            graph[next_crawl] = outlinks
 
-    return index
+    return index, graph
 
 
 ##
@@ -198,4 +202,8 @@ def test_hash_function(func, keys, size):
 # words = get_page('http://zachholman.com/').split()
 # counts = test_hash_function(hash_string, words, 12)
 # print counts
+
+## test new crawl function with graph returned
+index, graph = crawl('http://www.udacity.com/cs101x/urank/index.html')
+print graph
 
