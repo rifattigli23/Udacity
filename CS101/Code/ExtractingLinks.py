@@ -140,6 +140,47 @@ def crawl(seed):
 
     return index, graph
 
+##
+# input: dictionary graph of urls and their outlinks
+# output: dictionary {url:rank, ...}
+# 
+# rank(0,url) = 1/npages
+# rank(t,url) = (1-d)/npages + 
+# where d is the damping constant of 0.8
+## 
+def compute_ranks(graph):
+    d = 0.8 # damping factor
+    numloops = 10
+    
+    ranks = {}
+    npages = len(graph)
+    for page in graph:
+        ranks[page] = 1.0 / npages
+    
+    for i in range(0, numloops):
+        newranks = {}
+        for page in graph:
+            newrank = (1 - d) / npages
+            
+            #Insert Code Here
+            for node in graph:
+                if page in graph[node]:
+                    newrank += d * ranks[node] / len(graph[node])
+            
+            newranks[page] = newrank
+        ranks = newranks
+    return ranks
+    
+    
+def lookup_best(index, ranks, keyword):
+    pages = lookup(index, keyword)
+    if not pages:
+        return None
+    best_page = pages[0]
+    for candidate in pages:
+        if ranks[candidate] > ranks[best_page]:
+            best_page = candidate
+    return best_page
 
 ##
 # TESTING
@@ -204,6 +245,12 @@ def test_hash_function(func, keys, size):
 # print counts
 
 ## test new crawl function with graph returned
+# index, graph = crawl('http://www.udacity.com/cs101x/urank/index.html')
+# print graph
+
+## test compute_ranks()
 index, graph = crawl('http://www.udacity.com/cs101x/urank/index.html')
-print graph
+ranks = compute_ranks(graph)
+
+print ranks
 
