@@ -3,6 +3,8 @@
 ###
 ###
 
+from bs4 import BeautifulSoup
+
 def get_page(url):
     if url in cache:
         return cache[url]
@@ -10,24 +12,11 @@ def get_page(url):
         print "Page not in cache: " + url
         return None
 
-def get_next_target(page):
-    start_link = page.find('<a href=')
-    if start_link == -1: 
-        return None, 0
-    start_quote = page.find('"', start_link)
-    end_quote = page.find('"', start_quote + 1)
-    url = page[start_quote + 1:end_quote]
-    return url, end_quote
-
 def get_all_links(page):
+    soup = BeautifulSoup(page)
     links = []
-    while True:
-        url, endpos = get_next_target(page)
-        if url:
-            links.append(url)
-            page = page[endpos:]
-        else:
-            break
+    for link in soup.find_all('a'):
+        links.append(link.get('href'))
     return links
 
 def add_page_to_index(index, url, content):
