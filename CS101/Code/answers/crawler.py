@@ -3,6 +3,7 @@
 ###
 ###
 
+from getpage import get_page
 from bs4 import BeautifulSoup
 
 def get_page(url):
