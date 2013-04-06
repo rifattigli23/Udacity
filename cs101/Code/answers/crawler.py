@@ -5,6 +5,7 @@
 
 from getpage import get_page
 from bs4 import BeautifulSoup
+from webcorpus import WebCorpus
 
 def get_page(url):
     if url in cache:
@@ -31,7 +32,7 @@ def add_to_index(index, keyword, url):
     else:
         index[keyword] = [url]
     
-def crawl_web(seed): # returns index, graph of inlinks
+def crawl_web(seed): # returns webcorpus (includes index, graph)
     tocrawl = set([seed])
     crawled = []
     graph = {}  # <url>, [list of pages it links to]
@@ -45,7 +46,13 @@ def crawl_web(seed): # returns index, graph of inlinks
             graph[url] = outlinks
             tocrawl.update(outlinks)
             crawled.append(url)
-    return index, graph
+
+    # create corpus & set index and graph (TODO: consider creating setting index and graph in init)
+    corpus = WebCorpus()
+    corpus.index = index
+    corpus.graph = graph      
+    
+    return corpus
 
 def compute_ranks(graph):
     d = 0.8 # damping factor
