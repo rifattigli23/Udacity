@@ -2,13 +2,18 @@
 ### search.py
 ###
 
+from webcorpus import WebCorpus
+
 def lookup(index, keyword):
     if keyword in index:
         return index[keyword]
     else:
         return None
 
-def lucky_search(index, ranks, keyword):
+def lucky_search(corpus, keyword):
+    index = corpus.index
+    ranks = corpus.ranks
+    
     pages = lookup(index, keyword)
     if not pages:
         return None
@@ -32,6 +37,6 @@ def quicksort_pages(pages, ranks):
                 better.append(page)
         return quicksort_pages(better, ranks) + [pages[0]] + quicksort_pages(worse, ranks)
             
-def ordered_search(index, ranks, keyword):
-    pages = lookup(index, keyword)
-    return quicksort_pages(pages, ranks)
+def ordered_search(corpus, keyword):
+    pages = lookup(corpus.index, keyword)
+    return quicksort_pages(pages, corpus.ranks)

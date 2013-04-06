@@ -50,15 +50,19 @@ def crawl_web(seed): # returns webcorpus (includes index, graph)
     # create corpus & set index and graph (TODO: consider creating setting index and graph in init)
     corpus = WebCorpus()
     corpus.index = index
-    corpus.graph = graph      
+    corpus.graph = graph
+    
+    compute_ranks(corpus)      
     
     return corpus
 
-def compute_ranks(graph):
+def compute_ranks(corpus):
     d = 0.8 # damping factor
     numloops = 10
     
     ranks = {}
+    graph = corpus.graph
+    
     npages = len(graph)
     for page in graph:
         ranks[page] = 1.0 / npages
@@ -72,7 +76,8 @@ def compute_ranks(graph):
                     newrank = newrank + d * (ranks[node] / len(graph[node]))
             newranks[page] = newrank
         ranks = newranks
-    return ranks
+
+    corpus.ranks = ranks
 
     
 cache = {
