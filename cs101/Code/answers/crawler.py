@@ -37,3 +37,16 @@ def crawl_web(seed): # returns webcorpus (includes index, graph)
             crawled.append(url)
     
     return corpus
+
+if __name__ == '__main__':
+    import pickle
+
+    corpus = crawl_web('http://udacity.com/cs101x/urank/index.html')
+    # write corpus to file
+    fname = 'corpus.pkl'
+    try:
+        with open(fname, 'w') as fout:
+            pickle.dump(corpus, fout)
+            print "Succesfully wrote corpus to " + fname
+    except IOError, e:
+        print "Cannot write out corpus: " + str(e)

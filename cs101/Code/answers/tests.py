@@ -4,6 +4,7 @@
 
 from crawler import crawl_web
 from search import lucky_search, ordered_search
+import pickle
 
 def test_engine():
     print "Testing..."
@@ -14,6 +15,9 @@ def test_engine():
     indexurl = 'http://udacity.com/cs101x/urank/index.html'
 
     corpus = crawl_web('http://udacity.com/cs101x/urank/index.html')
+    fname = 'corpus.pkl'
+    f = open(fname, 'w')
+    pickle.dump(corpus, f)
 
     assert lucky_search(corpus, 'Hummus') == kathleen
     assert ordered_search(corpus, 'Hummus') == [kathleen, nickel, arsenic, hummus, indexurl] 
