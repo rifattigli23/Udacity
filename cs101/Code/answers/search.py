@@ -4,39 +4,35 @@
 
 from webcorpus import WebCorpus
 
-def lookup(index, keyword):
-    if keyword in index:
-        return index[keyword]
-    else:
-        return None
-
 def lucky_search(corpus, keyword):
-    index = corpus.index
-    ranks = corpus.ranks
+
+    pages = corpus.lookup(keyword)
     
-    pages = lookup(index, keyword)
     if not pages:
         return None
     best_page = pages[0]
+    best_rank = corpus.page_rank(best_page)
+    
     for candidate in pages:
-        if ranks[candidate] > ranks[best_page]:
+        if corpus.page_rank(candidate) > best_rank:
                 best_page = candidate
+                best_rank = corpus.page_rank(candidate)
     return best_page
 
-def quicksort_pages(pages, ranks):
+def quicksort_pages(corpus, pages):
     if not pages or len(pages) <= 1:
         return pages
     else:
-        pivot = ranks[pages[0]]
+        pivot = corpus.page_rank(pages[0])
         worse = []
         better = []
         for page in pages[1:]:
-            if ranks[page] <= pivot:
+            if corpus.page_rank(page) <= pivot:
                 worse.append(page)
             else:
                 better.append(page)
-        return quicksort_pages(better, ranks) + [pages[0]] + quicksort_pages(worse, ranks)
+        return quicksort_pages(corpus, better) + [pages[0]] + quicksort_pages(corpus, worse)
             
 def ordered_search(corpus, keyword):
-    pages = lookup(corpus.index, keyword)
-    return quicksort_pages(pages, corpus.ranks)
+    pages = corpus.lookup(keyword)
+    return quicksort_pages(corpus, pages)
