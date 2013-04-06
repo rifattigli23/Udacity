@@ -28,8 +28,8 @@ class MainDish(Dish):
     """
     Represents an entree (main dish).
     """
-    def __init__(self, name, price, description=None, vegetarian=None, sides=3):
-        super(MainDish, self).__init__(name, price, description=description, vegetarian=vegetarian)
+    def __init__(self, name, price, description=None, vegetarian=False, sides=0):
+        super(MainDish, self).__init__(name, price, description, vegetarian)
         self.sides = sides
     #     
     # def __str__(self):
@@ -42,8 +42,8 @@ class Appetizer(Dish):
     """
     Represents an appetizer.
     """
-    def __init__(self, name, price, description=None, vegetarian=None, serves=1):
-        super(Appetizer, self).__init__(name, price, description=description, vegetarian=vegetarian)
+    def __init__(self, name, price, description=None, vegetarian=False, serves=1):
+        super(Appetizer, self).__init__(name, price, description, vegetarian)
         self.serves = serves
     
     # def __str__(self):
